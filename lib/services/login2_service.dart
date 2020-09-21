@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/adapter.dart';
+import 'package:dio/dio.dart';
 import 'package:http/io_client.dart';
-
 
 class LoginService2 {
   static final String url = 'https://aztrackapiqa.asiczen.com/api/user/login';
+
   static Future<void> getToken(var user) async {
     Map<String, String> headers = {
       "Content-Type": "application/json",

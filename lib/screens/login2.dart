@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:rest_call/services/login2_service.dart';
+import 'package:rest_call/injector/injector.dart';
+import 'package:rest_call/services/auth/api/api_auth_repository.dart';
 import 'package:rest_call/services/user/user.dart';
+import 'package:rest_call/storage/sharedpreferences/shared_preferences_manager.dart';
 
 class Login2 extends StatefulWidget {
   @override
@@ -14,6 +16,8 @@ class _Login2State extends State<Login2> {
   TextEditingController password = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   User user = User();
+  ApiAuthRepository repo = ApiAuthRepository();
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,9 +46,20 @@ class _Login2State extends State<Login2> {
                     border: OutlineInputBorder()),
               ),
               RaisedButton(
-                onPressed: () {
+                onPressed: ()async {
                   _formKey.currentState.save();
-                  LoginService2.getToken(jsonEncode(user.toJson()));
+                  //LoginService2.getToken(jsonEncode(user.toJson()));
+                final SharedPreferencesManager _sharedPreferencesManager = await SharedPreferencesManager.getInstance();
+                 var data = await repo.loginUser(user.toJson());
+                 await _sharedPreferencesManager.putString(SharedPreferencesManager.keyAccessToken, data.token);
+                 await _sharedPreferencesManager.putString(SharedPreferencesManager.keyRefreshToken, data.refreshtoken);
+                },
+                child: Text('Login'),
+              ),
+              RaisedButton(
+                onPressed: ()async {
+                  repo.getlastLocation();
+               
                 },
                 child: Text('Login'),
               )
